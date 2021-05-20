@@ -4,6 +4,9 @@
 package turtle;
 
 import java.util.List;
+
+import static org.hamcrest.CoreMatchers.allOf;
+
 import java.util.ArrayList;
 
 public class TurtleSoup {
@@ -15,7 +18,10 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawSquare(Turtle turtle, int sideLength) {
-        throw new RuntimeException("implement me!");
+        for (int i = 0; i < 4; i++) {
+            turtle.forward(sideLength);
+            turtle.turn(90.0);
+        }
     }
 
     /**
@@ -28,7 +34,7 @@ public class TurtleSoup {
      * @return angle in degrees, where 0 <= angle < 360
      */
     public static double calculateRegularPolygonAngle(int sides) {
-        throw new RuntimeException("implement me!");
+        return 180.0 - (360.0 / sides) ;
     }
 
     /**
@@ -42,7 +48,7 @@ public class TurtleSoup {
      * @return the integer number of sides
      */
     public static int calculatePolygonSidesFromAngle(double angle) {
-        throw new RuntimeException("implement me!");
+        return (int) Math.round(360 / (180 - angle));
     }
 
     /**
@@ -55,7 +61,12 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawRegularPolygon(Turtle turtle, int sides, int sideLength) {
-        throw new RuntimeException("implement me!");
+        double angle = calculateRegularPolygonAngle(sides);
+        
+        for (int i = 0; i < sides; i ++) {
+            turtle.forward(sideLength);
+            turtle.turn(180.0 - angle);
+        }
     }
 
     /**
@@ -79,7 +90,26 @@ public class TurtleSoup {
      */
     public static double calculateHeadingToPoint(double currentHeading, int currentX, int currentY,
                                                  int targetX, int targetY) {
-        throw new RuntimeException("implement me!");
+        // get vector from current point to target point
+        int targetVectorX = targetX - currentX;
+        int targetVectorY = targetY - currentY;
+        
+        // the north vector is (0, 1)
+        // this angle is positive when targetVector move anticlockwise
+        double targetVectorToNorthVectorAngle = Math.acos(targetVectorY / Math.sqrt(
+               Math.pow(targetVectorX, 2) + Math.pow(targetVectorY, 2))) / Math.PI * 180.0;
+                                                        // Math.acos return result in rads
+        if (targetVectorToNorthVectorAngle == 0 && currentHeading == 0) {
+            return 0.0;
+        } else {
+            // cos(x) == cos(-x), the start point of target vector is (0, 1) and angle is
+            // increasing anticlockwise, so angle is <= 180 for x <= 0 and > 180 for x > 0
+            if (targetVectorX > 0) {
+                targetVectorToNorthVectorAngle = 360.0 - targetVectorToNorthVectorAngle;
+            }
+        }
+        
+        return 360.0 - currentHeading - targetVectorToNorthVectorAngle;
     }
 
     /**
@@ -97,7 +127,17 @@ public class TurtleSoup {
      *         otherwise of size (# of points) - 1
      */
     public static List<Double> calculateHeadings(List<Integer> xCoords, List<Integer> yCoords) {
-        throw new RuntimeException("implement me!");
+        assert xCoords.size() == yCoords.size() : "Different lengths of xCoords and yCoords";
+        List<Double> headingAngles = new ArrayList<Double>();
+        int noOfCoords = xCoords.size();
+        double currentHeading = 0.0;
+        
+        for (int i = 0; i < noOfCoords - 1; i++) {
+            headingAngles.add(calculateHeadingToPoint(currentHeading, xCoords.get(i),
+                                    yCoords.get(i), xCoords.get(i+1), yCoords.get(i+1)));
+            currentHeading = headingAngles.get(i);
+        }
+        return headingAngles;
     }
 
     /**
@@ -121,8 +161,9 @@ public class TurtleSoup {
      */
     public static void main(String args[]) {
         DrawableTurtle turtle = new DrawableTurtle();
-
-        drawSquare(turtle, 40);
+        
+        // draw circle
+        drawRegularPolygon(turtle, 720, 1);
 
         // draw the window
         turtle.draw();

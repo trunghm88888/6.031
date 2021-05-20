@@ -49,6 +49,7 @@ public class TurtleSoupTest {
         assertEquals(0.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, 0, 1), 0.001);
         assertEquals(90.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, 1, 0), 0.001);
         assertEquals(359.0, TurtleSoup.calculateHeadingToPoint(1.0, 4, 5, 4, 6), 0.001);
+        assertEquals(135.0, TurtleSoup.calculateHeadingToPoint(45.0, 1, 1, 1, -1), 0.001);
     }
 
     /**
