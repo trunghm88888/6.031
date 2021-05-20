@@ -61,11 +61,11 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawRegularPolygon(Turtle turtle, int sides, int sideLength) {
-        double angle = calculateRegularPolygonAngle(sides);
+        double polygonInternalAngle = calculateRegularPolygonAngle(sides);
         
         for (int i = 0; i < sides; i ++) {
             turtle.forward(sideLength);
-            turtle.turn(180.0 - angle);
+            turtle.turn(180.0 - polygonInternalAngle);
         }
     }
 
@@ -128,8 +128,11 @@ public class TurtleSoup {
      */
     public static List<Double> calculateHeadings(List<Integer> xCoords, List<Integer> yCoords) {
         assert xCoords.size() == yCoords.size() : "Different lengths of xCoords and yCoords";
+        
         List<Double> headingAngles = new ArrayList<Double>();
         int noOfCoords = xCoords.size();
+        
+        // the start heading angle is 0.0
         double currentHeading = 0.0;
         
         for (int i = 0; i < noOfCoords - 1; i++) {
@@ -137,6 +140,7 @@ public class TurtleSoup {
                                     yCoords.get(i), xCoords.get(i+1), yCoords.get(i+1)));
             currentHeading = headingAngles.get(i);
         }
+        
         return headingAngles;
     }
 
@@ -168,5 +172,4 @@ public class TurtleSoup {
         // draw the window
         turtle.draw();
     }
-
 }
